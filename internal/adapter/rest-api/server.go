@@ -26,6 +26,7 @@ func New(
 	e.Use(echoMiddleware.Logger())
 	e.Use(echoMiddleware.Recover())
 	e.Use(oapiMiddleware.OapiRequestValidator(swagger))
+	e.HTTPErrorHandler = errorHandler
 
 	RegisterHandlers(e, NewStrictHandler(handler, nil))
 

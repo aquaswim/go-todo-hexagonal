@@ -19,12 +19,10 @@ func NewTodoService(todoRepo port.TodoRepository) port.TodoService {
 func (t todoService) List(ctx context.Context, paginationParam *domain.PaginationParam) (*domain.TodoItemList, error) {
 	result, err := t.todoRepo.Find(ctx, paginationParam)
 	if err != nil {
-		// todo domain.error
 		return nil, err
 	}
 	count, err := t.todoRepo.Count(ctx)
 	if err != nil {
-		// todo domain.error
 		return nil, err
 	}
 	return &domain.TodoItemList{
@@ -36,7 +34,6 @@ func (t todoService) List(ctx context.Context, paginationParam *domain.Paginatio
 func (t todoService) Create(ctx context.Context, todo *domain.TodoItem) (*domain.TodoItem, error) {
 	createdItem, err := t.todoRepo.Create(ctx, todo)
 	if err != nil {
-		// todo domain.error
 		return nil, err
 	}
 	return createdItem, nil
@@ -45,7 +42,6 @@ func (t todoService) Create(ctx context.Context, todo *domain.TodoItem) (*domain
 func (t todoService) FindByID(ctx context.Context, id int) (*domain.TodoItem, error) {
 	todoItem, err := t.todoRepo.FindByID(ctx, id)
 	if err != nil {
-		// todo domain.error
 		return nil, err
 	}
 	return todoItem, nil
@@ -54,7 +50,6 @@ func (t todoService) FindByID(ctx context.Context, id int) (*domain.TodoItem, er
 func (t todoService) UpdateByID(ctx context.Context, id int, todo *domain.TodoItem) (*domain.TodoItem, error) {
 	updatedItem, err := t.todoRepo.UpdateByID(ctx, id, todo)
 	if err != nil {
-		// todo domain.error
 		return nil, err
 	}
 	return updatedItem, err
@@ -63,13 +58,11 @@ func (t todoService) UpdateByID(ctx context.Context, id int, todo *domain.TodoIt
 func (t todoService) DeleteByID(ctx context.Context, id int) (*domain.TodoItem, error) {
 	todoItem, err := t.FindByID(ctx, id)
 	if err != nil {
-		// todo domain.error
 		return nil, err
 	}
 
 	err = t.todoRepo.DeleteByID(ctx, id)
 	if err != nil {
-		// todo domain.error
 		return nil, err
 	}
 	return todoItem, nil
