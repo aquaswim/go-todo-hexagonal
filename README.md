@@ -8,8 +8,15 @@ golang todo api using Hexagonal architecture
   * rest-server: entry point for restful api server
 * api: [oapi codegen](https://github.com/deepmap/oapi-codegen/) stuff goes here
 * internal
-  * core
-  * adapters
+  * core: core business process
+    * domain: entity
+    * port: interface to glue service adapter with core
+    * service: use case goes here
+  * adapters: service adapter
+    * config: save the application config
+    * rest-api: restapi driver actor
+    * storage: driven actor for all storage capability
+      * pgsql: all stuff needed for pgsql goes here like: schema, repo, and migration
 
 # Acknowledgement
 
@@ -17,5 +24,5 @@ golang todo api using Hexagonal architecture
 
 # Todo
 
-* migration: https://github.com/Masterminds/squirrel
-* query builder: https://github.com/z0ne-dev/mgx
+* query builder: https://github.com/Masterminds/squirrel
+* auth
