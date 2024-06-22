@@ -24,5 +24,4 @@ golang todo api using Hexagonal architecture
 
 # Todo
 
-* query builder: https://github.com/Masterminds/squirrel
 * auth
