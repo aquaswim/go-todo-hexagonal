@@ -13,7 +13,7 @@ import (
 func newRepo(tb testing.TB) *todoRepository {
 	//todo: use https://github.com/pashagolub/pgxmock
 	tb.Log("connecting to database")
-	dbPool, err := pgsql.Connect(config.New())
+	dbPool, err := pgsql.Connect(config.DBConfigFromENV())
 	if err != nil {
 		tb.Fatalf("fail to connect to db: %s", err)
 	}

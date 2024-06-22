@@ -13,9 +13,9 @@ import (
 )
 
 func main() {
-	cfg := config.New()
+	cfg := config.RestConfigFromENV()
 
-	pgPool, err := pgsql.Connect(cfg)
+	pgPool, err := pgsql.Connect(cfg.DB)
 	if err != nil {
 		panic(err)
 	}
@@ -42,7 +42,6 @@ func main() {
 	}()
 
 	// And we serve HTTP until the world ends.
-	port := "8080"
-	_ = server.Start(net.JoinHostPort("0.0.0.0", port))
+	_ = server.Start(net.JoinHostPort("0.0.0.0", cfg.Port))
 	// do other cleanup here
 }

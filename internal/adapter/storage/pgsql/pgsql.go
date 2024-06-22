@@ -9,8 +9,8 @@ import (
 	"log"
 )
 
-func Connect(cfg *config.Config) (*pgxpool.Pool, error) {
-	dbPool, err := pgxpool.New(context.Background(), cfg.DBConnection)
+func Connect(cfg *config.DBConfig) (*pgxpool.Pool, error) {
+	dbPool, err := pgxpool.New(context.Background(), cfg.Connection)
 	if err != nil {
 		return nil, err
 	}
@@ -19,7 +19,7 @@ func Connect(cfg *config.Config) (*pgxpool.Pool, error) {
 		return nil, err
 	}
 
-	if cfg.DBMigrationOnBoot {
+	if cfg.MigrationOnBoot {
 		if err = execMigration(dbPool); err != nil {
 			return nil, err
 		}
