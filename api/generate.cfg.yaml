@@ -1,0 +1,7 @@
+package: restApi
+generate:
+  echo-server: true
+  embedded-spec: true
+  models: true
+  strict-server: true
+output: internal/adapter/rest-api/api.gen.go
