@@ -3,15 +3,17 @@ package repositories
 import (
 	"context"
 	"fmt"
-	"github.com/jackc/pgx/v5/pgxpool"
+	"hexagonal-todo/internal/adapter/config"
+	"hexagonal-todo/internal/adapter/storage/pgsql"
 	"hexagonal-todo/internal/core/domain"
 	"testing"
 	"time"
 )
 
 func newRepo(tb testing.TB) *todoRepository {
+	//todo: use https://github.com/pashagolub/pgxmock
 	tb.Log("connecting to database")
-	dbPool, err := pgxpool.New(context.TODO(), "postgresql://postgres:password@192.168.1.207:5432/todo")
+	dbPool, err := pgsql.Connect(config.New())
 	if err != nil {
 		tb.Fatalf("fail to connect to db: %s", err)
 	}
