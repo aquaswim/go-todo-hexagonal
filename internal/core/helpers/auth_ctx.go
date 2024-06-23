@@ -5,7 +5,9 @@ import (
 	"hexagonal-todo/internal/core/domain"
 )
 
-const authCtxKey = "app_authkey"
+type _ctxKey uint8
+
+const authCtxKey _ctxKey = iota
 
 func SetAuthCtx(ctx context.Context, data *domain.TokenData) context.Context {
 	return context.WithValue(ctx, authCtxKey, data)
