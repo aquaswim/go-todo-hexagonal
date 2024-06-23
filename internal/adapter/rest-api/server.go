@@ -2,17 +2,13 @@ package restApi
 
 import (
 	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/golobby/container/v3"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 	oapiMiddleware "github.com/oapi-codegen/echo-middleware"
-	"hexagonal-todo/internal/core/port"
 )
 
-func New(
-	todoService port.TodoService,
-	authService port.AuthService,
-	tokenManager port.TokenManager,
-) (*echo.Echo, error) {
+func New() (*echo.Echo, error) {
 	swagger, err := GetSwagger()
 	if err != nil {
 		return nil, err
@@ -20,10 +16,9 @@ func New(
 	// Clear out the servers array in the swagger spec, that skips validating
 	// that h names match. We don't know how this thing will be run.
 	swagger.Servers = nil
-	handler := &h{
-		todoService: todoService,
-		authService: authService,
-	}
+	handler := &h{}
+
+	container.MustFill(container.Global, handler)
 
 	e := echo.New()
 	//todo: proper global logger
@@ -31,7 +26,7 @@ func New(
 	e.Use(echoMiddleware.Recover())
 	e.Use(oapiMiddleware.OapiRequestValidatorWithOptions(swagger, &oapiMiddleware.Options{
 		Options: openapi3filter.Options{
-			AuthenticationFunc: newAuthenticator(tokenManager),
+			AuthenticationFunc: newAuthenticator(),
 		},
 	}))
 	e.HTTPErrorHandler = errorHandler

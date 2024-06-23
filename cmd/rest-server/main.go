@@ -2,41 +2,22 @@ package main
 
 import (
 	"context"
+	"github.com/golobby/container/v3"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/labstack/echo/v4"
+	"hexagonal-todo/internal"
 	"hexagonal-todo/internal/adapter/config"
-	restApi "hexagonal-todo/internal/adapter/rest-api"
-	"hexagonal-todo/internal/adapter/storage/pgsql"
-	"hexagonal-todo/internal/adapter/storage/pgsql/repositories"
-	tokenManager "hexagonal-todo/internal/adapter/token_manager"
-	"hexagonal-todo/internal/core/service"
 	"net"
 	"os"
 	"os/signal"
 )
 
 func main() {
-	cfg := config.RestConfigFromENV()
+	internal.InitContainer()
 
-	pgPool, err := pgsql.Connect(cfg.DB)
-	if err != nil {
-		panic(err)
-	}
-	defer pgPool.Close()
+	var server *echo.Echo
 
-	todoRepo := repositories.NewTodoRepo(pgPool)
-	todoService := service.NewTodoService(todoRepo)
-
-	tm := tokenManager.NewJwtTokenManager(cfg.Jwt)
-	userRepo := repositories.NewUserRepo(pgPool)
-	authService := service.NewAuthService(userRepo, tm)
-
-	server, err := restApi.New(
-		todoService,
-		authService,
-		tm,
-	)
-	if err != nil {
-		panic(err)
-	}
+	container.MustResolve(container.Global, &server)
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
@@ -50,6 +31,12 @@ func main() {
 	}()
 
 	// And we serve HTTP until the world ends.
+	var cfg *config.RestConfig
+	container.MustResolve(container.Global, &cfg)
+
 	_ = server.Start(net.JoinHostPort("0.0.0.0", cfg.Port))
 	// do other cleanup here
+	container.MustCall(container.Global, func(pgPool *pgxpool.Pool) {
+		pgPool.Close()
+	})
 }

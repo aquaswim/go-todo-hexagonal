@@ -6,6 +6,7 @@ require (
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/getkin/kin-openapi v0.125.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/golobby/container/v3 v3.3.2
 	github.com/jackc/pgx/v5 v5.6.0
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/oapi-codegen/echo-middleware v1.0.2

@@ -8,8 +8,8 @@ import (
 )
 
 type h struct {
-	todoService port.TodoService
-	authService port.AuthService
+	todoService port.TodoService `container:"type"`
+	authService port.AuthService `container:"type"`
 }
 
 func (h h) HealthCheck(_ context.Context, _ HealthCheckRequestObject) (HealthCheckResponseObject, error) {

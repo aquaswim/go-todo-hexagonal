@@ -3,6 +3,7 @@ package restApi
 import (
 	"context"
 	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/golobby/container/v3"
 	oapiMiddleware "github.com/oapi-codegen/echo-middleware"
 	"hexagonal-todo/internal/core/domain"
 	coreHelpers "hexagonal-todo/internal/core/helpers"
@@ -12,7 +13,10 @@ import (
 
 const bearerPrefix = "Bearer "
 
-func newAuthenticator(tokenManager port.TokenManager) openapi3filter.AuthenticationFunc {
+func newAuthenticator() openapi3filter.AuthenticationFunc {
+	var tokenManager port.TokenManager
+	container.MustResolve(container.Global, &tokenManager)
+
 	return func(ctx context.Context, input *openapi3filter.AuthenticationInput) error {
 		if input.SecuritySchemeName != "BearerAuth" {
 			return domain.NewAppErrorString(domain.ErrCodeInternal, "Security scheme is not bearer auth")
