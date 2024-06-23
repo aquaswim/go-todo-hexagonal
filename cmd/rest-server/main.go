@@ -20,6 +20,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer pgPool.Close()
 
 	todoRepo := repositories.NewTodoRepo(pgPool)
 	todoService := service.NewTodoService(todoRepo)
