@@ -27,6 +27,8 @@ paths:
   /todo-item:
     get:
       operationId: todoItemList
+      security:
+        - BearerAuth: []
       tags:
         - todo-item
       parameters:
@@ -43,6 +45,8 @@ paths:
           $ref: '#/components/responses/500'
     post:
       operationId: todoItemCreate
+      security:
+        - BearerAuth: []
       tags:
         - todo-item
       requestBody:
@@ -70,6 +74,8 @@ paths:
           type: integer
     get:
       operationId: todoItemGetById
+      security:
+        - BearerAuth: []
       tags:
         - todo-item
       responses:
@@ -85,6 +91,8 @@ paths:
           $ref: '#/components/responses/500'
     put:
       operationId: todoItemUpdateById
+      security:
+        - BearerAuth: []
       tags:
         - todo-item
       requestBody:
@@ -107,6 +115,8 @@ paths:
           $ref: '#/components/responses/500'
     delete:
       operationId: todoItemDeleteById
+      security:
+        - BearerAuth: []
       tags:
         - todo-item
       responses:

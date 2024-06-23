@@ -1,6 +1,7 @@
 package restApi
 
 import (
+	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 	oapiMiddleware "github.com/oapi-codegen/echo-middleware"
@@ -10,6 +11,7 @@ import (
 func New(
 	todoService port.TodoService,
 	authService port.AuthService,
+	tokenManager port.TokenManager,
 ) (*echo.Echo, error) {
 	swagger, err := GetSwagger()
 	if err != nil {
@@ -27,7 +29,11 @@ func New(
 	//todo: proper global logger
 	e.Use(echoMiddleware.Logger())
 	e.Use(echoMiddleware.Recover())
-	e.Use(oapiMiddleware.OapiRequestValidator(swagger))
+	e.Use(oapiMiddleware.OapiRequestValidatorWithOptions(swagger, &oapiMiddleware.Options{
+		Options: openapi3filter.Options{
+			AuthenticationFunc: newAuthenticator(tokenManager),
+		},
+	}))
 	e.HTTPErrorHandler = errorHandler
 
 	RegisterHandlers(e, NewStrictHandler(handler, nil))

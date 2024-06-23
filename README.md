@@ -24,4 +24,4 @@ golang todo api using Hexagonal architecture
 
 # Todo
 
-* auth
+* per user todo item

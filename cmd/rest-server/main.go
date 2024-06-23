@@ -31,6 +31,7 @@ func main() {
 	server, err := restApi.New(
 		todoService,
 		authService,
+		tm,
 	)
 	if err != nil {
 		panic(err)
