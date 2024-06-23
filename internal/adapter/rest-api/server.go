@@ -21,8 +21,7 @@ func New() (*echo.Echo, error) {
 	container.MustFill(container.Global, handler)
 
 	e := echo.New()
-	//todo: proper global logger
-	e.Use(echoMiddleware.Logger())
+	e.Use(loggerMiddleware())
 	e.Use(echoMiddleware.Recover())
 	e.Use(oapiMiddleware.OapiRequestValidatorWithOptions(swagger, &oapiMiddleware.Options{
 		Options: openapi3filter.Options{

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
 	"hexagonal-todo/internal/core/domain"
 	"net/http"
 )
@@ -37,7 +38,7 @@ func errorHandler(err error, c echo.Context) {
 
 	err = c.JSON(httpCode, responseBody)
 	if err != nil {
-		c.Logger().Errorf("failed to send error response: %s", err)
+		log.Error().Err(err).Stack().Msg("failed to send error response")
 	}
 }
 

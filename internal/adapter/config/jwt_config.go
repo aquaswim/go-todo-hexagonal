@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/rs/zerolog/log"
 	"os"
 	"time"
 )
@@ -13,7 +14,7 @@ type JwtConfig struct {
 func JwtConfigFromENV() *JwtConfig {
 	duration, err := time.ParseDuration(os.Getenv("JWT_DURATION"))
 	if err != nil {
-		//todo: log something to console
+		log.Warn().Msg("failed to parse JWT_DURATION, fallback to 1h")
 		duration = time.Hour
 	}
 	return &JwtConfig{
