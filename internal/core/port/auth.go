@@ -15,6 +15,7 @@ type AuthService interface {
 	Login(ctx context.Context, credential *domain.LoginCredential) (*domain.LoginResponse, error)
 	Register(ctx context.Context, userData *domain.UserData) (*domain.UserDataWithID, error)
 	ValidateToken(ctx context.Context, token string) (*domain.TokenData, error)
+	MyProfile(ctx context.Context) (*domain.UserDataWithID, error)
 }
 
 type TokenManager interface {

@@ -136,23 +136,23 @@ func (h h) AuthRegister(ctx context.Context, request AuthRegisterRequestObject) 
 	if err != nil {
 		return nil, err
 	}
-	// this is soo bad!!!!!
 	return AuthRegister200JSONResponse{
-		UserData: struct {
-			Email    openapi_types.Email `json:"email"`
-			FullName string              `json:"fullName"`
-			Id       int                 `json:"id"`
-			Password string              `json:"password"`
-		}(struct {
-			Email    openapi_types.Email
-			FullName string
-			Id       int
-			Password string
-		}{
+		UserData: UserProfile{
 			Email:    openapi_types.Email(res.Email),
 			FullName: res.FullName,
 			Id:       int(res.Id),
-			Password: "-redacted-",
-		}),
+		},
+	}, nil
+}
+
+func (h h) AuthMyProfile(ctx context.Context, _ AuthMyProfileRequestObject) (AuthMyProfileResponseObject, error) {
+	profile, err := h.authService.MyProfile(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return AuthMyProfile200JSONResponse{
+		Email:    openapi_types.Email(profile.Email),
+		FullName: profile.FullName,
+		Id:       int(profile.Id),
 	}, nil
 }

@@ -81,3 +81,15 @@ func (a authService) ValidateToken(ctx context.Context, token string) (*domain.T
 	}
 	return decodeToken, nil
 }
+
+func (a authService) MyProfile(ctx context.Context) (*domain.UserDataWithID, error) {
+	authCtx, err := helpers.GetAuthCtx(ctx)
+	if err != nil {
+		return nil, err
+	}
+	userData, err := a.userRepo.GetUserById(ctx, authCtx.Id)
+	if err != nil {
+		return nil, err
+	}
+	return userData, nil
+}
