@@ -9,6 +9,7 @@ import (
 
 func New(
 	todoService port.TodoService,
+	authService port.AuthService,
 ) (*echo.Echo, error) {
 	swagger, err := GetSwagger()
 	if err != nil {
@@ -19,6 +20,7 @@ func New(
 	swagger.Servers = nil
 	handler := &h{
 		todoService: todoService,
+		authService: authService,
 	}
 
 	e := echo.New()

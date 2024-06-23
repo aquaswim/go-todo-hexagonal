@@ -8,7 +8,9 @@ servers:
   - url: http://localhost:8080
 tags:
   - name: todo-item
-    description: todo item
+    description: manage todo item
+  - name: auth
+    description: auth endpoints
 paths:
   /:
     get:
@@ -118,6 +120,50 @@ paths:
           $ref: '#/components/responses/404'
         default:
           $ref: '#/components/responses/500'
+  /auth/register:
+    post:
+      operationId: authRegister
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/registerRequest'
+      responses:
+        200:
+          description: register success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/registerResponse'
+        400:
+          $ref: '#/components/responses/400'
+        default:
+          $ref: '#/components/responses/500'
+  /auth/login:
+    post:
+      operationId: authLogin
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginRequest'
+      responses:
+        200:
+          description: login success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/loginResponse'
+        403:
+          $ref: '#/components/responses/403'
+        default:
+          $ref: '#/components/responses/500'
 
 components:
   schemas:
@@ -185,9 +231,73 @@ components:
             $ref: '#/components/schemas/todoItemWithId'
         meta:
           $ref: '#/components/schemas/listMeta'
+    loginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+      required:
+        - email
+        - password
+    loginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+        - token
+    registerRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: dummy@gmail.com
+        password:
+          type: string
+          format: password
+          minLength: 6
+        fullName:
+          type: string
+          example: John Doe
+      required:
+        - email
+        - password
+        - fullName
+    registerResponse:
+      type: object
+      properties:
+        userData:
+          allOf:
+            - type: object
+              properties:
+                id:
+                  type: integer
+              required:
+                - id
+            - $ref: '#/components/schemas/registerRequest'
+      required:
+        - userData
+
   responses:
     400:
       description: bad request error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    401:
+      description: unauthorized error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    403:
+      description: forbidden
       content:
         application/json:
           schema:
@@ -219,3 +329,8 @@ components:
       schema:
         type: integer
         default: 10
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

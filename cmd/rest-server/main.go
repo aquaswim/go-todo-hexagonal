@@ -6,6 +6,7 @@ import (
 	restApi "hexagonal-todo/internal/adapter/rest-api"
 	"hexagonal-todo/internal/adapter/storage/pgsql"
 	"hexagonal-todo/internal/adapter/storage/pgsql/repositories"
+	tokenManager "hexagonal-todo/internal/adapter/token_manager"
 	"hexagonal-todo/internal/core/service"
 	"net"
 	"os"
@@ -23,8 +24,13 @@ func main() {
 	todoRepo := repositories.NewTodoRepo(pgPool)
 	todoService := service.NewTodoService(todoRepo)
 
+	tm := tokenManager.NewJwtTokenManager(cfg.Jwt)
+	userRepo := repositories.NewUserRepo(pgPool)
+	authService := service.NewAuthService(userRepo, tm)
+
 	server, err := restApi.New(
 		todoService,
+		authService,
 	)
 	if err != nil {
 		panic(err)

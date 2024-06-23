@@ -31,6 +31,7 @@ func Connect(cfg *config.DBConfig) (*pgxpool.Pool, error) {
 func execMigration(dbPool *pgxpool.Pool) error {
 	migrator, err := mgx.New(mgx.Migrations(
 		migrations.Migration202406211108CreateTodoTable,
+		migrations.Migration202406231150CreateUserTable,
 	))
 	if err != nil {
 		return err

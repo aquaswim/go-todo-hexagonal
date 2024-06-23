@@ -2,12 +2,14 @@ package restApi
 
 import (
 	"context"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 	"hexagonal-todo/internal/core/domain"
 	"hexagonal-todo/internal/core/port"
 )
 
 type h struct {
 	todoService port.TodoService
+	authService port.AuthService
 }
 
 func (h h) HealthCheck(_ context.Context, _ HealthCheckRequestObject) (HealthCheckResponseObject, error) {
@@ -106,4 +108,51 @@ func (h h) TodoItemUpdateById(ctx context.Context, request TodoItemUpdateByIdReq
 		Id:          int(res.Id),
 		Title:       res.Title,
 	}, err
+}
+
+func (h h) AuthLogin(ctx context.Context, request AuthLoginRequestObject) (AuthLoginResponseObject, error) {
+	creds := &domain.LoginCredential{
+		Email:    string(request.Body.Email),
+		Password: request.Body.Password,
+	}
+	res, err := h.authService.Login(ctx, creds)
+	if err != nil {
+		return nil, err
+	}
+	return &AuthLogin200JSONResponse{
+		Token: res.Token,
+	}, nil
+}
+
+func (h h) AuthRegister(ctx context.Context, request AuthRegisterRequestObject) (AuthRegisterResponseObject, error) {
+	registerData := &domain.UserData{
+		LoginCredential: domain.LoginCredential{
+			Email:    string(request.Body.Email),
+			Password: request.Body.Password,
+		},
+		FullName: request.Body.FullName,
+	}
+	res, err := h.authService.Register(ctx, registerData)
+	if err != nil {
+		return nil, err
+	}
+	// this is soo bad!!!!!
+	return AuthRegister200JSONResponse{
+		UserData: struct {
+			Email    openapi_types.Email `json:"email"`
+			FullName string              `json:"fullName"`
+			Id       int                 `json:"id"`
+			Password string              `json:"password"`
+		}(struct {
+			Email    openapi_types.Email
+			FullName string
+			Id       int
+			Password string
+		}{
+			Email:    openapi_types.Email(res.Email),
+			FullName: res.FullName,
+			Id:       int(res.Id),
+			Password: "-redacted-",
+		}),
+	}, nil
 }

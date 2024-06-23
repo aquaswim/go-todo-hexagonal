@@ -50,6 +50,10 @@ func appErrorToHTTPCode(appError *domain.AppError) int {
 		return http.StatusNotFound
 	case domain.ErrCodeBadRequest:
 		return http.StatusBadRequest
+	case domain.ErrCodeForbidden:
+		return http.StatusForbidden
+	case domain.ErrCodeUnauthorized:
+		return http.StatusUnauthorized
 	default:
 		return http.StatusInternalServerError
 	}

@@ -5,6 +5,7 @@ import "os"
 type RestConfig struct {
 	Port string
 	DB   *DBConfig
+	Jwt  *JwtConfig
 }
 
 func RestConfigFromENV() *RestConfig {
@@ -15,5 +16,6 @@ func RestConfigFromENV() *RestConfig {
 	return &RestConfig{
 		Port: port,
 		DB:   DBConfigFromENV(),
+		Jwt:  JwtConfigFromENV(),
 	}
 }
