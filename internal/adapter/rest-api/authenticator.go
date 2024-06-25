@@ -14,8 +14,8 @@ import (
 const bearerPrefix = "Bearer "
 
 func newAuthenticator() openapi3filter.AuthenticationFunc {
-	var tokenManager port.TokenManager
-	container.MustResolve(container.Global, &tokenManager)
+	var authService port.AuthService
+	container.MustResolve(container.Global, &authService)
 
 	return func(ctx context.Context, input *openapi3filter.AuthenticationInput) error {
 		if input.SecuritySchemeName != "BearerAuth" {
@@ -34,7 +34,7 @@ func newAuthenticator() openapi3filter.AuthenticationFunc {
 		}
 		token := strings.TrimPrefix(authHeader, bearerPrefix)
 
-		tokenData, err := tokenManager.DecodeToken(ctx, token)
+		tokenData, err := authService.ValidateToken(ctx, token)
 		if err != nil {
 			return err
 		}

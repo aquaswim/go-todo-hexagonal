@@ -2,13 +2,12 @@ package main
 
 import (
 	"context"
-	"github.com/golobby/container/v3"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"hexagonal-todo/internal"
 	"hexagonal-todo/internal/adapter/config"
+	"hexagonal-todo/internal/core/port"
 	"net"
 	"os"
 	"os/signal"
@@ -27,9 +26,7 @@ func init() {
 }
 
 func main() {
-	var server *echo.Echo
-
-	container.MustResolve(container.Global, &server)
+	server := internal.ContainerResolve[*echo.Echo]()
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
@@ -43,18 +40,15 @@ func main() {
 	}()
 
 	// And we serve HTTP until the world ends.
-	var cfg *config.RestConfig
-	container.MustResolve(container.Global, &cfg)
+	restCfg := internal.ContainerResolve[*config.RestConfig]()
 
 	server.HideBanner = true
 	server.HidePort = true
 
 	log.Info().
-		Str("port", cfg.Port).
+		Str("port", restCfg.Port).
 		Msg("server started")
-	_ = server.Start(net.JoinHostPort("0.0.0.0", cfg.Port))
+	_ = server.Start(net.JoinHostPort("0.0.0.0", restCfg.Port))
 	// do other cleanup here
-	container.MustCall(container.Global, func(pgPool *pgxpool.Pool) {
-		pgPool.Close()
-	})
+	_ = internal.ContainerNamedResolve[port.Closable]("db").Close()
 }
