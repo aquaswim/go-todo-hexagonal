@@ -1,11 +1,15 @@
 package main
 
 import (
+	"errors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc"
 	"hexagonal-todo/internal"
+	"hexagonal-todo/internal/core/port"
 	"net"
+	"os"
+	"os/signal"
 	"time"
 )
 
@@ -28,7 +32,20 @@ func main() {
 	log.Info().Msg("server started on 127.0.0.1:5001")
 	server := internal.ContainerResolve[*grpc.Server]()
 
-	if err := server.Serve(lis); err != nil {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	go func() {
+		<-c
+		log.Info().Msg("Gracefully shutting down...")
+		err := lis.Close()
+		if err != nil {
+			log.Error().Err(err).Msg("error shutdown server %s")
+		}
+	}()
+
+	if err := server.Serve(lis); err != nil && errors.Is(err, grpc.ErrServerStopped) {
 		log.Fatal().Err(err).Msg("failed to serve")
 	}
+
+	_ = internal.ContainerNamedResolve[port.Closable]("db").Close()
 }

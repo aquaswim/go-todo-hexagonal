@@ -27,6 +27,8 @@ func InitContainer() {
 		}
 		return pool
 	})
+	container.MustNamedSingletonLazy(container.Global, "db", pgsql.NewCloser)
+
 	container.MustSingletonLazy(container.Global, repositories.NewTodoRepo)
 	container.MustSingletonLazy(container.Global, repositories.NewUserRepo)
 
@@ -57,5 +59,10 @@ func InitContainer() {
 func ContainerResolve[T any]() T {
 	var t T
 	container.MustResolve(container.Global, &t)
+	return t
+}
+func ContainerNamedResolve[T any](name string) T {
+	var t T
+	container.MustNamedResolve(container.Global, &t, name)
 	return t
 }
