@@ -1,0 +1,33 @@
+syntax="proto3";
+
+package grpc;
+
+option go_package="internal/adapter/grpc/pb";
+
+import "commons.proto";
+
+message Todo {
+    message FindPayload {
+        PaginationParam pagination = 1;
+    }
+    message Data {
+        int64 id = 1;
+        string title = 2;
+        string description = 3;
+    }
+    message ListResult {
+        repeated Data items = 1;
+        ListMeta meta = 2;
+    }
+    message GetByIDPayload {
+        int64 id = 1;
+    }
+    message CreatePayload {
+        string title = 1;
+        string description = 2;
+    }
+    message UpdatePayload{
+        GetByIDPayload findPayload = 1;
+        CreatePayload updatePayload = 2;
+    }
+}
