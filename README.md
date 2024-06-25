@@ -1,12 +1,14 @@
 # Hexagonal Todo API
 
-golang todo api using Hexagonal architecture
+golang todo api using Hexagonal architecture, this app have 2 entry point: grpc and restapi.
 
 # Project Structure
 
 * cmd
   * rest-server: entry point for restful api server
-* api: [oapi codegen](https://github.com/deepmap/oapi-codegen/) stuff goes here
+* api
+  * rest: [oapi codegen](https://github.com/deepmap/oapi-codegen/) stuff goes here
+  * grpc: .proto source code for grpc services goes here
 * internal
   * core: core business process
     * domain: entity
@@ -15,6 +17,7 @@ golang todo api using Hexagonal architecture
   * adapters: service adapter
     * config: save the application config
     * rest-api: restapi driver actor
+    * grpc: grpc driver actor
     * storage: driven actor for all storage capability
       * pgsql: all stuff needed for pgsql goes here like: schema, repo, and migration
 
