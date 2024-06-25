@@ -3,6 +3,7 @@ package tokenManager
 import (
 	"context"
 	"github.com/golang-jwt/jwt"
+	"github.com/rs/zerolog/log"
 	"hexagonal-todo/internal/adapter/config"
 	"hexagonal-todo/internal/core/domain"
 	"hexagonal-todo/internal/core/port"
@@ -15,6 +16,8 @@ type jwtTokenManager struct {
 }
 
 func NewJwtTokenManager(cfg *config.JwtConfig) port.TokenManager {
+	log.Debug().Msg("initializing jwt token manager")
+
 	return &jwtTokenManager{
 		cfg: cfg,
 	}

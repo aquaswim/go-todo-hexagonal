@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/rs/zerolog/log"
 	"hexagonal-todo/internal/core/domain"
 	"hexagonal-todo/internal/core/helpers"
 	"hexagonal-todo/internal/core/port"
@@ -16,6 +17,8 @@ func NewAuthService(
 	userRepo port.UserRepository,
 	tokenManager port.TokenManager,
 ) port.AuthService {
+	log.Debug().Msg("initializing auth service")
+
 	return &authService{
 		userRepo:     userRepo,
 		tokenManager: tokenManager,

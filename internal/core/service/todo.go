@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/rs/zerolog/log"
 	"hexagonal-todo/internal/core/domain"
 	"hexagonal-todo/internal/core/port"
 )
@@ -11,6 +12,8 @@ type todoService struct {
 }
 
 func NewTodoService(todoRepo port.TodoRepository) port.TodoService {
+	log.Debug().Msg("initializing todo service")
+
 	return &todoService{
 		todoRepo: todoRepo,
 	}

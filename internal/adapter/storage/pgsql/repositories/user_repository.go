@@ -5,6 +5,7 @@ import (
 	"github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/zerolog/log"
 	"hexagonal-todo/internal/adapter/storage/pgsql/helpers"
 	"hexagonal-todo/internal/core/domain"
 	"hexagonal-todo/internal/core/port"
@@ -16,6 +17,8 @@ type userRepository struct {
 }
 
 func NewUserRepo(db *pgxpool.Pool) port.UserRepository {
+	log.Debug().Msg("initializing user repositories")
+
 	return &userRepository{
 		db: db,
 	}

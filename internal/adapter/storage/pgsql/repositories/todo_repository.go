@@ -5,6 +5,7 @@ import (
 	"github.com/Masterminds/squirrel"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/zerolog/log"
 	"hexagonal-todo/internal/adapter/storage/pgsql/helpers"
 	"hexagonal-todo/internal/core/domain"
 	"hexagonal-todo/internal/core/port"
@@ -16,6 +17,7 @@ type todoRepository struct {
 }
 
 func NewTodoRepo(db *pgxpool.Pool) port.TodoRepository {
+	log.Debug().Msg("initializing todo repository")
 	return &todoRepository{
 		db: db,
 	}
