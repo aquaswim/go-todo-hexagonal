@@ -1,0 +1,13 @@
+syntax="proto3";
+
+package grpc;
+
+option go_package="internal/adapter/grpc/pb";
+
+message HealthCheck {
+    message Payload {}
+
+    message Result {
+        bool healthy = 1;
+    }
+}

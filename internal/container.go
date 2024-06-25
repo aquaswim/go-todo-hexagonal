@@ -4,7 +4,10 @@ import (
 	"github.com/golobby/container/v3"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
+	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc"
 	"hexagonal-todo/internal/adapter/config"
+	grpcAdapter "hexagonal-todo/internal/adapter/grpc"
 	restApi "hexagonal-todo/internal/adapter/rest-api"
 	"hexagonal-todo/internal/adapter/storage/pgsql"
 	"hexagonal-todo/internal/adapter/storage/pgsql/repositories"
@@ -37,6 +40,16 @@ func InitContainer() {
 		if err != nil {
 			panic(err)
 		}
+		return server
+	})
+
+	container.MustSingletonLazy(container.Global, func() *grpc.Server {
+		server, err := grpcAdapter.NewServer()
+
+		if err != nil {
+			log.Fatal().Err(err).Msg("failed to create grpc server adapter")
+		}
+
 		return server
 	})
 }
