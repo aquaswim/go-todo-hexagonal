@@ -40,3 +40,9 @@ func InitContainer() {
 		return server
 	})
 }
+
+func ContainerResolve[T any]() T {
+	var t T
+	container.MustResolve(container.Global, &t)
+	return t
+}
