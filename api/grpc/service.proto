@@ -6,12 +6,18 @@ option go_package="internal/adapter/grpc/pb";
 
 import "etc.proto";
 import "auth.proto";
+import "google/protobuf/empty.proto";
 
+// service that open to public (without auth)
 service TodoHexagonalService {
-    rpc GetHealth(HealthCheck.Payload) returns (HealthCheck.Result);
+    rpc GetHealth(google.protobuf.Empty) returns (HealthCheck.Result);
 
     // auth
     rpc AuthLogin(Auth.LoginCredential) returns (Auth.LoginResult);
     rpc AuthRegister(Auth.RegisterData) returns (Auth.UserData);
-//    rpc AuthProfile() returns (Auth.UserData)
+}
+
+// service that need auth header
+service TodoHexagonalServiceWithAuth{
+    rpc AuthProfile(google.protobuf.Empty) returns (Auth.UserData);
 }
