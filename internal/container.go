@@ -3,11 +3,8 @@ package internal
 import (
 	"github.com/golobby/container/v3"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/labstack/echo/v4"
-	"github.com/rs/zerolog/log"
-	"google.golang.org/grpc"
 	"hexagonal-todo/internal/adapter/config"
-	grpcAdapter "hexagonal-todo/internal/adapter/grpc"
+	"hexagonal-todo/internal/adapter/grpc"
 	restApi "hexagonal-todo/internal/adapter/rest-api"
 	"hexagonal-todo/internal/adapter/storage/pgsql"
 	"hexagonal-todo/internal/adapter/storage/pgsql/repositories"
@@ -37,23 +34,9 @@ func InitContainer() {
 	container.MustSingletonLazy(container.Global, service.NewTodoService)
 	container.MustSingletonLazy(container.Global, service.NewAuthService)
 
-	container.MustSingletonLazy(container.Global, func() *echo.Echo {
-		server, err := restApi.New()
-		if err != nil {
-			panic(err)
-		}
-		return server
-	})
+	container.MustNamedSingletonLazy(container.Global, "rest", restApi.New)
 
-	container.MustSingletonLazy(container.Global, func() *grpc.Server {
-		server, err := grpcAdapter.NewServer()
-
-		if err != nil {
-			log.Fatal().Err(err).Msg("failed to create grpc server adapter")
-		}
-
-		return server
-	})
+	container.MustNamedSingletonLazy(container.Global, "grpc", grpc.New)
 }
 
 func ContainerResolve[T any]() T {
