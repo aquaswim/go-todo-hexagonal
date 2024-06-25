@@ -1,0 +1,29 @@
+syntax="proto3";
+
+package grpc;
+
+option go_package="internal/adapter/grpc/pb";
+
+message Auth {
+    message LoginCredential {
+        string email = 1;
+        string password = 2;
+    }
+
+    message LoginResult {
+        string token = 1;
+    }
+
+    message RegisterData {
+        string email = 1;
+        string password = 2;
+        string fullName = 3;
+    }
+
+    message UserData {
+        int64 id =  1;
+        string email = 2;
+        string password = 3;
+        string fullName = 4;
+    }
+}

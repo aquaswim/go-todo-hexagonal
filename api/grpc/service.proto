@@ -5,7 +5,13 @@ package grpc;
 option go_package="internal/adapter/grpc/pb";
 
 import "etc.proto";
+import "auth.proto";
 
 service TodoHexagonalService {
     rpc GetHealth(HealthCheck.Payload) returns (HealthCheck.Result);
+
+    // auth
+    rpc AuthLogin(Auth.LoginCredential) returns (Auth.LoginResult);
+    rpc AuthRegister(Auth.RegisterData) returns (Auth.UserData);
+//    rpc AuthProfile() returns (Auth.UserData)
 }
