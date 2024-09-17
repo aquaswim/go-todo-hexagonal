@@ -16,28 +16,6 @@ type Auth struct {
 	authService port.AuthService `container:"type"`
 }
 
-func (a Auth) UnaryInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-	if a.isNeedAuth(info.FullMethod) {
-		tokenData, err := a.handlerAuth(ctx)
-		if err != nil {
-			return nil, err
-		}
-		ctx = coreHelpers.SetAuthCtx(ctx, tokenData)
-	}
-	return handler(ctx, req)
-}
-
-func (a Auth) StreamInterceptor(srv any, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-	if a.isNeedAuth(info.FullMethod) {
-		_, err := a.handlerAuth(ss.Context())
-		if err != nil {
-			return err
-		}
-		// todo search how to replace context in server stream and add the tokenData
-	}
-	return handler(srv, ss)
-}
-
 func (a Auth) isNeedAuth(method string) bool {
 	return strings.HasPrefix(method, "/grpc.TodoHexagonalServiceWithAuth/")
 }
@@ -56,4 +34,39 @@ func (a Auth) handlerAuth(ctx context.Context) (*domain.TokenData, error) {
 	}
 
 	return a.authService.ValidateToken(ctx, token)
+}
+
+type wrappedStream struct {
+	ctx context.Context
+	grpc.ServerStream
+}
+
+func (w wrappedStream) Context() context.Context {
+	return w.ctx
+}
+
+func (a Auth) UnaryInterceptor(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+	if a.isNeedAuth(info.FullMethod) {
+		tokenData, err := a.handlerAuth(ctx)
+		if err != nil {
+			return nil, err
+		}
+		ctx = coreHelpers.SetAuthCtx(ctx, tokenData)
+	}
+	return handler(ctx, req)
+}
+
+func (a Auth) StreamInterceptor(srv any, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+	if a.isNeedAuth(info.FullMethod) {
+		tokenData, err := a.handlerAuth(ss.Context())
+		if err != nil {
+			return err
+		}
+
+		ss = wrappedStream{
+			ctx:          coreHelpers.SetAuthCtx(ss.Context(), tokenData),
+			ServerStream: ss,
+		}
+	}
+	return handler(srv, ss)
 }
